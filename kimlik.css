@@ -1,0 +1,6 @@
+:root{--zemin:#f0ede6;--kart:#fff;--yazi:#1d2530;--soluk:#59626e;--cizgi:#d4d0c6;--vurgu:#a4161a}
+body{font-family:"IBM Plex Serif",Georgia,serif;font-size:16px;border-top:10px solid #1d2530}
+h1{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;font-size:clamp(46px,8.6vw,92px);letter-spacing:-.015em}
+.ust-etiket,h2,label,button{font-family:"IBM Plex Sans Condensed",sans-serif!important}
+h1{text-wrap:balance}
+.dip{border-top:1px solid var(--cizgi)}
