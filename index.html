@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mahallen büyük depremde ne yaşar?</title>
+<meta name="description" content="İBB'nin 7,5 büyüklüğünde gece depremi senaryosu: İstanbul'un 959 mahallesinde beklenen bina hasarı, binaların yaşı ve geçici barınma ihtiyacı.">
+<meta property="og:title" content="Mahallen büyük depremde ne yaşar?">
+<meta property="og:description" content="İBB deprem senaryosu: 959 mahallede beklenen bina hasarı ve binaların yaşı.">
+<meta property="og:image" content="https://birtohum.github.io/mahallen-depremde/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css?v=1">
+<style>
+  :root { --vurgu: #b91c1c; --h0: #7f1d1d; --h1: #dc2626; --h2: #f59e0b; --h3: #fde68a; --h4: #e7e5e0; --az: #f3efe6; --cok: #991b1b; }
+  @media (prefers-color-scheme: dark) { :root { --vurgu: #f87171; --h0: #fca5a5; --h1: #ef4444; --h2: #f59e0b; --h3: #a16207; --h4: #2a2d33; --az: #1f2227; --cok: #ef4444; } }
+  .form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-top: 4px; }
+  .form label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--soluk); font-weight: 500; flex: 0 1 380px; }
+  .form input { font: inherit; font-size: 17px; height: 48px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--cizgi); background: var(--kart); color: var(--yazi); }
+  .form button { font: inherit; font-weight: 600; height: 48px; padding: 0 22px; border-radius: 10px; border: 0; background: var(--yazi); color: var(--zemin); cursor: pointer; }
+  .hasar { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin-top: 16px; }
+  .hasar i { display: block; height: 100%; }
+  .hl { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 13px; color: var(--soluk); }
+  .hl span i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .senaryo { margin-top: 12px; color: var(--soluk); font-size: 15px; }
+  #harita path { cursor: pointer; }
+  .not { margin: 8px 0 0; font-size: 15px; color: var(--soluk); max-width: 760px; }
+  @media (max-width: 720px) { .form label { flex: 1 1 100%; } .form button { flex: 1; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="ust">
+    <p class="ust-etiket">İBB deprem senaryosu · 959 mahalle</p>
+    <h1>Mahallen büyük<br>depremde ne yaşar?</h1>
+    <p class="not">İBB'nin 7,5 büyüklüğünde, gece olacak bir İstanbul depremi senaryosuna göre her mahallede beklenen bina hasarı. Bu bir kehanet değil, bir hazırlık hesabı: sonuçlar en çok binaların yaşına ve zemine bağlı.</p>
+    <form id="form" class="form" autocomplete="off">
+      <label><span>Mahalleni yaz</span><input id="ara" list="mahalleler" placeholder="örneğin Moda, Kadıköy"></label>
+      <button type="submit">Göster</button>
+      <datalist id="mahalleler"></datalist>
+    </form>
+  </header>
+
+  <section class="ozet" id="ozet" aria-live="polite"></section>
+
+  <section class="harita-kutu">
+    <h2>İlçelere göre ağır ve çok ağır hasarlı bina oranı</h2>
+    <svg id="harita" role="img" aria-label="İstanbul ilçeleri hasar oranı haritası"></svg>
+    <div class="lejant" id="lejant"></div>
+  </section>
+
+  <section class="iki">
+    <div><h2 id="listeBaslik">En çok etkilenmesi beklenen mahalleler</h2><p class="alt" id="listeAlt">En az 100 binası olan mahalleler; ağır ve çok ağır hasarlı bina oranına göre.</p><ol class="liste" id="liste"></ol></div>
+    <div><h2>Binaların yaşı fark yaratıyor mu?</h2><p class="alt">Her mahallede 1980 öncesi bina payı ile beklenen ağır hasar oranı. Her nokta bir mahalle.</p><div id="dagilim"></div></div>
+  </section>
+
+  <footer class="dip">
+    <p><b>Veri:</b> İBB Açık Veri, <a href="https://data.ibb.gov.tr/dataset/deprem-senaryosu-analiz-sonuclari">Deprem Senaryosu Analiz Sonuçları</a> (7,5 Mw gece senaryosu, 2021'de yayımlandı) ve <a href="https://data.ibb.gov.tr/dataset/mahalle-bazli-bina-analiz-verisi">2017 Mahalle Bazlı Bina Sayıları</a> (İBB Açık Veri Lisansı). İlçe sınırları geoBoundaries/OpenStreetMap (ODbL).</p>
+    <p><b>Nasıl okunmalı:</b> Bunlar tek bir senaryo için yapılmış model tahminleri; gerçek bir depremin büyüklüğü, yeri ve saati farklı olabilir. Bina sayıları 2017'ye ait; o tarihten sonra yıkılan, yenilenen ya da güçlendirilen binalar yansımaz. Senaryo sonuçlarının güncellenmesi İBB'de sürüyor. Kendi binan için tek güvenilir bilgi, yapının yerinde incelenmesidir.</p>
+    <p><a href="https://github.com/birtohum/mahallen-depremde">Kaynak kodu</a> · <a href="https://birtohum.github.io/">birtohum</a></p>
+  </footer>
+</main>
+<script src="uygulama.js?v=1"></script>
+</body>
+</html>
