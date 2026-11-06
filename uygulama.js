@@ -89,13 +89,16 @@ function dagilim() {
   $("dagilim").innerHTML = s + "</svg>" + `<p class="alt">Korelasyon katsayısı r = ${sayi(r, 2)} (${n} mahalle). Eski binası çok olan mahallelerde beklenen hasar ${r > 0.5 ? "güçlü biçimde" : r > 0.3 ? "orta düzeyde" : "zayıf biçimde"} daha yüksek. Bina yaşı farkın yalnız bir kısmını açıklıyor; zemin, bina yüksekliği ve faya uzaklık gibi etkenler de rol oynuyor olabilir.</p>`;
 }
 
-function bul(yazi) {
-  const q = yazi.toLocaleUpperCase("tr").split(",").map((x) => x.trim());
-  const ad = q[0].replace(/ MAHALLESİ$| MAH\.?$/, "");
-  const aday = M.filter((m) => m.ad === ad || m.ad === ad + " MAHALLESİ");
-  if (!aday.length) return null;
-  if (q[1]) { const t = aday.find((m) => m.il === q[1]); if (t) return t; }
-  return aday[0];
+const duz = (x) => x.toLocaleUpperCase("tr").replace(/[ÇĞİÖŞÜ]/g, (c) => ({Ç: "C", Ğ: "G", İ: "I", Ö: "O", Ş: "S", Ü: "U"}[c])).trim();
+function adaylar(yazi) {
+  const q = yazi.split(",").map(duz);
+  const ad = q[0].replace(/ MAHALLESI$| MAH\.?$/, "");
+  const aday = M.filter((m) => duz(m.ad) === ad || duz(m.ad) === ad + " MAHALLESI");
+  if (q[1]) { const t = aday.filter((m) => duz(m.il) === q[1]); if (t.length) return t; }
+  return aday;
+}
+function secenekler(baslik, l) {
+  $("ozet").innerHTML = `<p class="cumle">${baslik}</p><div class="liste secenek">${l.map((m) => `<button type="button" data-i="${M.indexOf(m)}">${guzel(m.ad)}, ${guzel(m.il)}</button>`).join("")}</div>`;
 }
 
 async function baslat() {
@@ -106,12 +109,18 @@ async function baslat() {
   $("mahalleler").innerHTML = M.map((m) => `<option value="${guzel(m.ad)}, ${guzel(m.il)}">`).join("");
   $("form").onsubmit = (e) => {
     e.preventDefault();
-    const m = bul($("ara").value);
-    if (m) goster(m); else $("ozet").innerHTML = `<p class="cumle">"${$("ara").value.replace(/[<>&]/g, "")}" adlı bir mahalle bulunamadı. Listeden seçmeyi dene ("Mahalle, İlçe").</p>`;
+    const yazi = $("ara").value.trim(), temiz = yazi.replace(/[<>&"]/g, "");
+    const l = adaylar(yazi);
+    if (l.length === 1) return goster(l[0]);
+    if (l.length > 1) return secenekler(`"${temiz}" adlı ${l.length} mahalle var. Hangisi?`, l);
+    const k = duz(yazi.split(",")[0]);
+    const yakin = k.length >= 3 ? M.filter((m) => duz(m.ad).includes(k)).slice(0, 12) : [];
+    if (yakin.length) return secenekler(`"${temiz}" adlı bir mahalle yok. Bunlardan biri mi?`, yakin);
+    $("ozet").innerHTML = `<p class="cumle">"${temiz}" adlı bir mahalle bulunamadı. Semt adları resmî mahalle adı olmayabilir: örneğin Moda, Kadıköy'ün Caferağa mahallesinde. Listeden seçmeyi dene ("Mahalle, İlçe").</p>`;
   };
   document.body.addEventListener("click", (e) => { const b = e.target.closest(".liste button"); if (b) { goster(M[Number(b.dataset.i)]); $("ozet").scrollIntoView({ behavior: "smooth" }); } });
   const p = new URLSearchParams(location.search);
-  const m = p.get("mahalle") ? bul(`${p.get("mahalle")}, ${p.get("ilce") || ""}`) : bul("CAFERAĞA, KADIKÖY") || M[0];
+  const m = (p.get("mahalle") ? adaylar(`${p.get("mahalle")}, ${p.get("ilce") || ""}`)[0] : adaylar("CAFERAĞA, KADIKÖY")[0]) || M[0];
   if (m) { $("ara").value = `${guzel(m.ad)}, ${guzel(m.il)}`; goster(m); }
 }
 baslat();
